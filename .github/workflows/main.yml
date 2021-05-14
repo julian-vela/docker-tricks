@@ -1,0 +1,33 @@
+name: Un flujo para publicar los archivos json a README y a metadata con Github Actions
+on:
+  push:
+    paths:
+    - 'tricks/**.json'
+    - '!tricks/000_metadata.json'
+jobs:
+  generate-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Publicar la lista de archivos en el metadata y generar el README
+        uses: ./action-generate-readme
+      - name: Anotar los cambios del README al repositorio
+        run: |
+          git config --global user.name 'Jelid Leon'
+          git config --global user.email 'jelid.leon@gmail.com'
+          # git commit -m "Actualizacion automatica 000_metadata.json" -a
+          git add -A
+          git diff-index --quiet HEAD || git commit -m "Actualizacion automatica 000_metadata.json"
+      - name: Subir cambios
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Notify to Slack
+        uses: innocarpe/actions-slack@v1
+        with:
+          status: ${{ job.status }}
+          success_text: '😎 Wow! Tenemos un nuevo cambio para el sitio de phpmexico 🚀 '
+          failure_text: '😣 Ouch! Algo falló subiendo nuevos cambios ❌ '
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
