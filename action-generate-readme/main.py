@@ -98,7 +98,7 @@ if __name__ == '__main__':
     # 1. Leer la informacion actual del metadata y la lista de archivos
     list_current_files = get_current_files(
         metadata_file_path=METADATA_FILE_PATH)
-    print("Archivos actuales:" + str(list_current_files))
+    print("Archivos actuales: " + str(list_current_files))
 
     # 2. Leer todos los archivos de la carpeta `/tricks`
     list_updated_files = get_data_files(data_folder_path=DATA_FOLDER_PATH)
